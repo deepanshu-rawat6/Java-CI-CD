@@ -30,7 +30,7 @@ pipeline {
         stage('STATIC CODE ANALYSIS') {
             steps {
                 script {
-                   withSonarQubeEnv(credentialsId: 'sonarqubeToken') {
+                   withSonarQubeEnv(credentialsId: 'tokenSonarqube') {
                        sh 'mvn clean package sonar:sonar'
                    }
                 }
@@ -40,31 +40,31 @@ pipeline {
         stage('QUALITY GATE STATUS') {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqubeToken'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'tokenSonarqube'
                 }
             }
         }
 
-        stage("UPLOAD ARTIFACTS TO NEXSUS") {
-            steps {
-                script {
-                    nexusArtifactUploader artifacts: [
-                        [
-                            artifactId: 'springboot',
-                            classifier: '',
-                            file: 'target/UPES.jar',
-                            type: 'jar'
-                        ]
-                    ],
-                    credentialsId: 'nexus',
-                    groupId: 'com.example',
-                    nexusUrl: '13.234.110.117:8081',
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    repository: 'Java-released',
-                    version: '1.0.0'
-                }
-            }
+//         stage("UPLOAD ARTIFACTS TO NEXSUS") {
+//             steps {
+//                 script {
+//                     nexusArtifactUploader artifacts: [
+//                         [
+//                             artifactId: 'springboot',
+//                             classifier: '',
+//                             file: 'target/UPES.jar',
+//                             type: 'jar'
+//                         ]
+//                     ],
+//                     credentialsId: 'nexus',
+//                     groupId: 'com.example',
+//                     nexusUrl: '13.234.110.117:8081',
+//                     nexusVersion: 'nexus3',
+//                     protocol: 'http',
+//                     repository: 'Java-released',
+//                     version: '1.0.0'
+//                 }
+//             }
         }
     }
 }
